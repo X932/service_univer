@@ -6,6 +6,5 @@ export class DepartmentsEntity {
   id: number;
 
   @Column()
-  // @ManyToOne(()=>)
   title: string;
 }
