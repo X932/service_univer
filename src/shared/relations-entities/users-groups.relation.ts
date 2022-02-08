@@ -1,9 +1,9 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { RatingsEntity } from '@modules/ratings/entities/ratings.entity';
 import { UsersEntity } from '@modules/users/entities/users.entity';
+import { GroupsEntity } from '@modules/groups/entities/groups.entity';
 
-@Entity('users_ratings')
-export class UsersRatingsEntity {
+@Entity('users_groups')
+export class UsersGroupsEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -11,7 +11,7 @@ export class UsersRatingsEntity {
   @JoinColumn()
   user: number;
 
-  @ManyToOne(() => RatingsEntity, (rating) => rating.id)
+  @ManyToOne(() => GroupsEntity, (group) => group.id)
   @JoinColumn()
-  rating: number;
+  group: number;
 }
