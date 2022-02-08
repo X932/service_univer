@@ -22,16 +22,7 @@ declare const module: any;
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
-    {
-      transport: Transport.RMQ,
-      options: {
-        urls: ['amqp://127.0.0.1:5672'],
-        queue: 'university_queue',
-        queueOptions: {
-          durable: false,
-        },
-      },
-    },
+    microserviceOptions,
   );
   app.listen();
 
