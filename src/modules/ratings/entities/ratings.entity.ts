@@ -1,8 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { UsersRatingsEntity } from '@relations-entities/users-ratings.relation';
 
 @Entity('ratings')
 export class RatingsEntity {
   @PrimaryGeneratedColumn()
+  @OneToMany(() => UsersRatingsEntity, (usersRatings) => usersRatings.rating)
   id: number;
 
   @Column()

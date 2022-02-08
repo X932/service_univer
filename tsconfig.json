@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": "src",
     "paths": {
-      "@database/*": ["database/*"],
+      "@relations-entities/*": ["shared/relations-entities/*"],
       "@modules/*": ["modules/*"]
     },
     "module": "commonjs",
