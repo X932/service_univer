@@ -1,12 +1,14 @@
-import { UsersSubjectsEntity } from '@relations-entities/users-subjects.relation';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { UsersEntity } from '@modules/users/entities/users.entity';
 
 @Entity('subjects')
 export class SubjectsEntity {
   @PrimaryGeneratedColumn()
-  @OneToMany(() => UsersSubjectsEntity, (usersSubject) => usersSubject.subject)
   id: number;
 
   @Column()
   title: string;
+
+  @ManyToMany(() => UsersEntity, (users) => users.subjects)
+  users: UsersEntity[];
 }
