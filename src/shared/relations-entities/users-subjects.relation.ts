@@ -1,6 +1,6 @@
+import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { SubjectsEntity } from '@modules/subjects/entities/subjects.entity';
 import { UsersEntity } from '@modules/users/entities/users.entity';
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('users_subjects')
 export class UsersSubjectsEntity {
