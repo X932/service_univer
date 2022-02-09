@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { UsersDepartmentsEntity } from '@relations-entities/users-departments.relation';
 import { SubjectsEntity } from '@modules/subjects/entities/subjects.entity';
+import { DepartmentsGroupsEntity } from '@relations-entities/departments-groups.relation';
 
 @Entity('departments')
 export class DepartmentsEntity {
@@ -15,6 +16,10 @@ export class DepartmentsEntity {
   @OneToMany(
     () => UsersDepartmentsEntity,
     (usersDepartments) => usersDepartments.department,
+  )
+  @OneToMany(
+    () => DepartmentsGroupsEntity,
+    (departmentsGroups) => departmentsGroups.department,
   )
   id: number;
 
