@@ -8,10 +8,10 @@ export class UsersGroupsEntity {
   id: number;
 
   @ManyToOne(() => UsersEntity, (user) => user.id)
-  @JoinColumn()
+  @JoinColumn({ name: 'user_id' })
   user: number;
 
   @ManyToOne(() => GroupsEntity, (group) => group.id)
-  @JoinColumn()
+  @JoinColumn({ name: 'group_id' })
   group: number;
 }
