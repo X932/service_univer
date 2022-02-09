@@ -4,6 +4,7 @@ import { UsersDepartmentsEntity } from '@relations-entities/users-departments.re
 import { UsersRatingsEntity } from '@relations-entities/users-ratings.relation';
 import { UsersGroupsEntity } from '@relations-entities/users-groups.relation';
 import { UsersRolesEntity } from '@relations-entities/users-roles.relation';
+import { DepartmentsGroupsEntity } from '@relations-entities/departments-groups.relation';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { UsersRolesEntity } from '@relations-entities/users-roles.relation';
       UsersRatingsEntity,
       UsersGroupsEntity,
       UsersRolesEntity,
+      DepartmentsGroupsEntity,
     ]),
   ],
 })
