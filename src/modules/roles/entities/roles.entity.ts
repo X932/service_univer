@@ -1,5 +1,13 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { UsersRolesEntity } from '@relations-entities/users-roles.relation';
+import { ActionsEntity } from '@modules/actions/entities/actions.entity';
 
 @Entity('roles')
 export class RolesEntity {
@@ -9,4 +17,18 @@ export class RolesEntity {
 
   @Column()
   title: string;
+
+  @ManyToMany(() => ActionsEntity, (actions) => actions.roles)
+  @JoinTable({
+    name: 'rights',
+    joinColumn: {
+      name: 'role_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'action_id',
+      referencedColumnName: 'id',
+    },
+  })
+  actions: ActionsEntity[];
 }
