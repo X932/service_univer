@@ -17,10 +17,6 @@ export class DepartmentsEntity {
     () => UsersDepartmentsEntity,
     (usersDepartments) => usersDepartments.department,
   )
-  @OneToMany(
-    () => DepartmentsGroupsEntity,
-    (departmentsGroups) => departmentsGroups.department,
-  )
   id: number;
 
   @Column()
@@ -39,4 +35,10 @@ export class DepartmentsEntity {
     },
   })
   subjects: SubjectsEntity[];
+
+  @OneToMany(
+    () => DepartmentsGroupsEntity,
+    (departmentsGroups) => departmentsGroups.department,
+  )
+  departmentsGroups: DepartmentsGroupsEntity[];
 }

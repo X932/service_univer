@@ -12,12 +12,14 @@ import { DepartmentsGroupsEntity } from '@relations-entities/departments-groups.
 export class GroupsEntity {
   @PrimaryGeneratedColumn()
   @ManyToOne(() => UsersGroupsEntity, (usersGroups) => usersGroups.group)
-  @OneToOne(
-    () => DepartmentsGroupsEntity,
-    (departmentsGroups) => departmentsGroups.group,
-  )
   id: number;
 
   @Column()
   title: string;
+
+  @OneToOne(
+    () => DepartmentsGroupsEntity,
+    (departmentsGroups) => departmentsGroups.group,
+  )
+  departmentsGroups: DepartmentsGroupsEntity;
 }
