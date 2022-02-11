@@ -15,10 +15,6 @@ import { SubjectsEntity } from '@modules/subjects/entities/subjects.entity';
 @Entity('users')
 export class UsersEntity {
   @PrimaryGeneratedColumn()
-  @OneToMany(
-    () => UsersDepartmentsEntity,
-    (usersDepartments) => usersDepartments.user,
-  )
   @OneToMany(() => UsersGroupsEntity, (usersGroups) => usersGroups.user)
   @OneToMany(() => UsersRatingsEntity, (usersRatings) => usersRatings.user)
   @OneToMany(() => UsersRolesEntity, (usersRoles) => usersRoles.user)
@@ -35,6 +31,12 @@ export class UsersEntity {
 
   @Column()
   password: string;
+
+  @OneToMany(
+    () => UsersDepartmentsEntity,
+    (usersDepartments) => usersDepartments.user,
+  )
+  usersDepartments: UsersDepartmentsEntity[];
 
   @ManyToMany(() => SubjectsEntity, (subjects) => subjects.users)
   @JoinTable({

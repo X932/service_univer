@@ -7,11 +7,14 @@ export class UsersDepartmentsEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => UsersEntity, (user) => user.id)
+  @ManyToOne(() => UsersEntity, (user) => user.usersDepartments)
   @JoinColumn({ name: 'user_id' })
-  user: number;
+  user: UsersEntity;
 
-  @ManyToOne(() => DepartmentsEntity, (department) => department.id)
+  @ManyToOne(
+    () => DepartmentsEntity,
+    (department) => department.usersDepartments,
+  )
   @JoinColumn({ name: 'department_id' })
-  department: number;
+  department: DepartmentsEntity;
 }
