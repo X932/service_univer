@@ -4,6 +4,7 @@ import {
   JoinTable,
   ManyToMany,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { UsersDepartmentsEntity } from '@relations-entities/users-departments.relation';
@@ -15,7 +16,6 @@ import { SubjectsEntity } from '@modules/subjects/entities/subjects.entity';
 @Entity('users')
 export class UsersEntity {
   @PrimaryGeneratedColumn()
-  @OneToMany(() => UsersGroupsEntity, (usersGroups) => usersGroups.user)
   @OneToMany(() => UsersRatingsEntity, (usersRatings) => usersRatings.user)
   @OneToMany(() => UsersRolesEntity, (usersRoles) => usersRoles.user)
   id: number;
@@ -31,6 +31,9 @@ export class UsersEntity {
 
   @Column()
   password: string;
+
+  @OneToOne(() => UsersGroupsEntity, (usersGroups) => usersGroups.user)
+  usersGroups: UsersGroupsEntity;
 
   @OneToMany(
     () => UsersDepartmentsEntity,
