@@ -1,10 +1,9 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { UsersRatingsEntity } from '@relations-entities/users-ratings.relation';
 
 @Entity('ratings')
 export class RatingsEntity {
   @PrimaryGeneratedColumn()
-  @OneToMany(() => UsersRatingsEntity, (usersRatings) => usersRatings.rating)
   id: number;
 
   @Column()
@@ -12,4 +11,7 @@ export class RatingsEntity {
 
   @Column()
   value: number;
+
+  @OneToOne(() => UsersRatingsEntity, (usersRatings) => usersRatings.rating)
+  usersRatings: UsersRatingsEntity;
 }

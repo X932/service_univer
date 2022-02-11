@@ -13,11 +13,14 @@ export class DepartmentsGroupsEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => DepartmentsEntity, (departments) => departments.id)
+  @ManyToOne(
+    () => DepartmentsEntity,
+    (departments) => departments.departmentsGroups,
+  )
   @JoinColumn({ name: 'department_id' })
-  department: number;
+  department: DepartmentsEntity;
 
-  @OneToOne(() => GroupsEntity, (groups) => groups.id)
+  @OneToOne(() => GroupsEntity, (groups) => groups.departmentsGroups)
   @JoinColumn({ name: 'group_id' })
-  group: number;
+  group: GroupsEntity;
 }

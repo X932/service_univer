@@ -1,4 +1,10 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { RatingsEntity } from '@modules/ratings/entities/ratings.entity';
 import { UsersEntity } from '@modules/users/entities/users.entity';
 
@@ -7,11 +13,11 @@ export class UsersRatingsEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => UsersEntity, (user) => user.id)
+  @ManyToOne(() => UsersEntity, (user) => user.usersRatings)
   @JoinColumn({ name: 'user_id' })
-  user: number;
+  user: UsersEntity;
 
-  @ManyToOne(() => RatingsEntity, (rating) => rating.id)
+  @OneToOne(() => RatingsEntity, (rating) => rating.usersRatings)
   @JoinColumn({ name: 'rating_id' })
-  rating: number;
+  rating: RatingsEntity;
 }

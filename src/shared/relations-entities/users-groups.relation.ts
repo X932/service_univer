@@ -1,4 +1,10 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { UsersEntity } from '@modules/users/entities/users.entity';
 import { GroupsEntity } from '@modules/groups/entities/groups.entity';
 
@@ -7,11 +13,11 @@ export class UsersGroupsEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => UsersEntity, (user) => user.id)
+  @OneToOne(() => UsersEntity, (user) => user.usersGroups)
   @JoinColumn({ name: 'user_id' })
-  user: number;
+  user: UsersEntity;
 
-  @ManyToOne(() => GroupsEntity, (group) => group.id)
+  @ManyToOne(() => GroupsEntity, (group) => group.usersGroups)
   @JoinColumn({ name: 'group_id' })
-  group: number;
+  group: GroupsEntity;
 }

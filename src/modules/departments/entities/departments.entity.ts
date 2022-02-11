@@ -13,14 +13,6 @@ import { DepartmentsGroupsEntity } from '@relations-entities/departments-groups.
 @Entity('departments')
 export class DepartmentsEntity {
   @PrimaryGeneratedColumn()
-  @OneToMany(
-    () => UsersDepartmentsEntity,
-    (usersDepartments) => usersDepartments.department,
-  )
-  @OneToMany(
-    () => DepartmentsGroupsEntity,
-    (departmentsGroups) => departmentsGroups.department,
-  )
   id: number;
 
   @Column()
@@ -39,4 +31,16 @@ export class DepartmentsEntity {
     },
   })
   subjects: SubjectsEntity[];
+
+  @OneToMany(
+    () => UsersDepartmentsEntity,
+    (usersDepartments) => usersDepartments.department,
+  )
+  usersDepartments: UsersDepartmentsEntity[];
+
+  @OneToMany(
+    () => DepartmentsGroupsEntity,
+    (departmentsGroups) => departmentsGroups.department,
+  )
+  departmentsGroups: DepartmentsGroupsEntity[];
 }

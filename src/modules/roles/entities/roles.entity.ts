@@ -12,11 +12,13 @@ import { ActionsEntity } from '@modules/actions/entities/actions.entity';
 @Entity('roles')
 export class RolesEntity {
   @PrimaryGeneratedColumn()
-  @OneToMany(() => UsersRolesEntity, (usersRoles) => usersRoles.role)
   id: number;
 
   @Column()
   title: string;
+
+  @OneToMany(() => UsersRolesEntity, (usersRoles) => usersRoles.role)
+  usersRoles: UsersRolesEntity[];
 
   @ManyToMany(() => ActionsEntity, (actions) => actions.roles)
   @JoinTable({

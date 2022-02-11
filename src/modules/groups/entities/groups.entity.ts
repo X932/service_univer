@@ -1,7 +1,7 @@
 import {
   Column,
   Entity,
-  ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -11,13 +11,17 @@ import { DepartmentsGroupsEntity } from '@relations-entities/departments-groups.
 @Entity('groups')
 export class GroupsEntity {
   @PrimaryGeneratedColumn()
-  @ManyToOne(() => UsersGroupsEntity, (usersGroups) => usersGroups.group)
-  @OneToOne(
-    () => DepartmentsGroupsEntity,
-    (departmentsGroups) => departmentsGroups.group,
-  )
   id: number;
 
   @Column()
   title: string;
+
+  @OneToMany(() => UsersGroupsEntity, (usersGroups) => usersGroups.group)
+  usersGroups: UsersGroupsEntity[];
+
+  @OneToOne(
+    () => DepartmentsGroupsEntity,
+    (departmentsGroups) => departmentsGroups.group,
+  )
+  departmentsGroups: DepartmentsGroupsEntity;
 }
