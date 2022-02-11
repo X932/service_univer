@@ -1,4 +1,10 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { UsersEntity } from '@modules/users/entities/users.entity';
 import { DepartmentsEntity } from '@modules/departments/entities/departments.entity';
 
@@ -7,7 +13,7 @@ export class UsersDepartmentsEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => UsersEntity, (user) => user.usersDepartments)
+  @OneToOne(() => UsersEntity, (user) => user.usersDepartments)
   @JoinColumn({ name: 'user_id' })
   user: UsersEntity;
 

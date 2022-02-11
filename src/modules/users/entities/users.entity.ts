@@ -39,11 +39,11 @@ export class UsersEntity {
   @OneToOne(() => UsersGroupsEntity, (usersGroups) => usersGroups.user)
   usersGroups: UsersGroupsEntity;
 
-  @OneToMany(
+  @OneToOne(
     () => UsersDepartmentsEntity,
     (usersDepartments) => usersDepartments.user,
   )
-  usersDepartments: UsersDepartmentsEntity[];
+  usersDepartments: UsersDepartmentsEntity;
 
   @ManyToMany(() => SubjectsEntity, (subjects) => subjects.users)
   @JoinTable({
