@@ -16,7 +16,6 @@ import { SubjectsEntity } from '@modules/subjects/entities/subjects.entity';
 @Entity('users')
 export class UsersEntity {
   @PrimaryGeneratedColumn()
-  @OneToMany(() => UsersRolesEntity, (usersRoles) => usersRoles.user)
   id: number;
 
   @Column()
@@ -30,6 +29,9 @@ export class UsersEntity {
 
   @Column()
   password: string;
+
+  @OneToOne(() => UsersRolesEntity, (usersRoles) => usersRoles.user)
+  usersRoles: UsersRolesEntity;
 
   @OneToMany(() => UsersRatingsEntity, (usersRatings) => usersRatings.user)
   usersRatings: UsersRatingsEntity[];
