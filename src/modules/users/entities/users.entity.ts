@@ -10,7 +10,6 @@ import {
 import { UsersDepartmentsEntity } from '@relations-entities/users-departments.relation';
 import { UsersGroupsEntity } from '@relations-entities/users-groups.relation';
 import { UsersRatingsEntity } from '@relations-entities/users-ratings.relation';
-import { UsersRolesEntity } from '@relations-entities/users-roles.relation';
 import { SubjectsEntity } from '@modules/subjects/entities/subjects.entity';
 
 @Entity('users')
@@ -29,9 +28,6 @@ export class UsersEntity {
 
   @Column()
   password: string;
-
-  @OneToOne(() => UsersRolesEntity, (usersRoles) => usersRoles.user)
-  usersRoles: UsersRolesEntity;
 
   @OneToMany(() => UsersRatingsEntity, (usersRatings) => usersRatings.user)
   usersRatings: UsersRatingsEntity[];
