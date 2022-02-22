@@ -3,6 +3,8 @@
     "baseUrl": "src",
     "paths": {
       "@relations-entities/*": ["shared/relations-entities/*"],
+      "@constants/*": ["shared/constants/*"],
+      "@errors/*": ["shared/errors/*"],
       "@modules/*": ["modules/*"]
     },
     "module": "commonjs",
