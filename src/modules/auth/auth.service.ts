@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UsersEntity } from '@modules/users/entities/users.entity';
 import { throwBadRequest } from '@errors/throw-bad-request';
@@ -16,12 +16,8 @@ export class AuthService {
   constructor(
     @InjectRepository(UsersEntity)
     private usersRepository: Repository<UsersEntity>,
-    @InjectRepository(UsersDepartmentsEntity)
-    private usersDepartmentsRepository: Repository<UsersDepartmentsEntity>,
     @InjectRepository(DepartmentsEntity)
     private departmentsRepository: Repository<DepartmentsEntity>,
-    @InjectRepository(UsersGroupsEntity)
-    private usersGroupsRepository: Repository<UsersGroupsEntity>,
     @InjectRepository(GroupsEntity)
     private groupsRepository: Repository<GroupsEntity>,
   ) {}
@@ -39,48 +35,51 @@ export class AuthService {
     return hash;
   }
 
-  private async createRelationUserDepartment(
-    user: UsersEntity,
-    departmentId: number,
-  ) {
-    const department = await this.departmentsRepository.findOne({
-      id: departmentId,
-    });
-    const userDepartmentRelation = new UsersDepartmentsEntity();
+  private async createRelations(user: UsersEntity, signUpUser: ISignUpUser) {
+    await getConnection().transaction(async (transactionalEntityManager) => {
+      const savedUser = await transactionalEntityManager.save<UsersEntity>(
+        user,
+      );
+      const department = await this.departmentsRepository.findOne({
+        id: signUpUser.departmentId,
+      });
+      if (!department) {
+        throwBadRequest(ResponseStatuses.DEPARTMENT_NOT_FOUND.description);
+      }
+      const userDepartmentRelation = new UsersDepartmentsEntity();
+      userDepartmentRelation.department = department;
+      userDepartmentRelation.user = savedUser;
+      await transactionalEntityManager.save<UsersDepartmentsEntity>(
+        userDepartmentRelation,
+      );
 
-    userDepartmentRelation.department = department;
-    userDepartmentRelation.user = user;
-    await this.usersDepartmentsRepository.save(userDepartmentRelation);
+      const group = await this.groupsRepository.findOne({
+        id: signUpUser.groupId,
+      });
+      if (!group) {
+        throwBadRequest(ResponseStatuses.GROUP_NOT_FOUND.description);
+      }
+      const userGroupRelation = new UsersGroupsEntity();
+      userGroupRelation.group = group;
+      userGroupRelation.user = user;
+      await transactionalEntityManager.save(userGroupRelation);
+    });
   }
 
-  private async createRelationUserGroup(user: UsersEntity, groupId: number) {
-    const group = await this.groupsRepository.findOne({
-      id: groupId,
-    });
-    const userGroupRelation = new UsersGroupsEntity();
-
-    userGroupRelation.group = group;
-    userGroupRelation.user = user;
-    await this.usersGroupsRepository.save(userGroupRelation);
-  }
-
-  public async signUp(user: ISignUpUser): Promise<SignUpResponse> {
-    const userEntity = await this.getUserByNickname(user.nickname);
+  public async signUp(signUpUser: ISignUpUser): Promise<SignUpResponse> {
+    const userEntity = await this.getUserByNickname(signUpUser.nickname);
 
     if (userEntity) {
       throwBadRequest(ResponseStatuses.BAD_REQUEST.description);
     }
-    const hashedPassword: string = await this.hashPassword(user.password);
-    const row: ISignUpUser = {
-      ...user,
-      password: hashedPassword,
-    };
-    delete row.departmentId;
-    delete row.groupId;
+    const hashedPassword: string = await this.hashPassword(signUpUser.password);
+    const user: UsersEntity = new UsersEntity();
+    user.name = signUpUser.name;
+    user.surname = signUpUser.surname;
+    user.nickname = signUpUser.nickname;
+    user.password = hashedPassword;
 
-    const savedUser = await this.usersRepository.save(row);
-    await this.createRelationUserDepartment(savedUser, user.departmentId);
-    await this.createRelationUserGroup(savedUser, user.groupId);
+    await this.createRelations(user, signUpUser);
     return { message: ResponseStatuses.OK.description };
   }
 
