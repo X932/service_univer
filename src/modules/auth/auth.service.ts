@@ -62,7 +62,9 @@ export class AuthService {
       const userGroupRelation = new UsersGroupsEntity();
       userGroupRelation.group = group;
       userGroupRelation.user = user;
-      await transactionalEntityManager.save(userGroupRelation);
+      await transactionalEntityManager.save<UsersGroupsEntity>(
+        userGroupRelation,
+      );
     });
   }
 
