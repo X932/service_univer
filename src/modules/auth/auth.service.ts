@@ -68,20 +68,22 @@ export class AuthService {
     });
   }
 
-  public async signUp(signUpUser: ISignUpUser): Promise<SignUpResponse> {
-    const userEntity = await this.getUserByNickname(signUpUser.nickname);
+  public async signUp(userCredentials: ISignUpUser): Promise<SignUpResponse> {
+    const userEntity = await this.getUserByNickname(userCredentials.nickname);
 
     if (userEntity) {
       throwBadRequest(ResponseStatuses.BAD_REQUEST.description);
     }
-    const hashedPassword: string = await this.hashPassword(signUpUser.password);
+    const hashedPassword: string = await this.hashPassword(
+      userCredentials.password,
+    );
     const user: UsersEntity = new UsersEntity();
-    user.name = signUpUser.name;
-    user.surname = signUpUser.surname;
-    user.nickname = signUpUser.nickname;
+    user.name = userCredentials.name;
+    user.surname = userCredentials.surname;
+    user.nickname = userCredentials.nickname;
     user.password = hashedPassword;
 
-    await this.createRelations(user, signUpUser);
+    await this.createRelations(user, userCredentials);
     return { message: ResponseStatuses.OK.description };
   }
 
