@@ -9,11 +9,18 @@ import { UsersDepartmentsEntity } from '@relations-entities/users-departments.re
 import { DepartmentsEntity } from '@modules/departments/entities/departments.entity';
 import { UsersGroupsEntity } from '@relations-entities/users-groups.relation';
 import { GroupsEntity } from '@modules/groups/entities/groups.entity';
-import { SignUpResponse, ISignUpUser } from './models/auth.model';
+import { JwtService } from '@nestjs/jwt';
+import {
+  SignUpResponse,
+  ISignUpUser,
+  IAuthorization,
+  SignInResponse,
+} from './models/auth.model';
 
 @Injectable()
 export class AuthService {
   constructor(
+    private jwtService: JwtService,
     @InjectRepository(UsersEntity)
     private usersRepository: Repository<UsersEntity>,
     @InjectRepository(DepartmentsEntity)
@@ -97,11 +104,28 @@ export class AuthService {
     return await bcrypt.compare(password, hash);
   }
 
-  public async signIn(user) {
+  private createJwt(id: number): string {
+    const payload = { sub: id };
+    return this.jwtService.sign(payload);
+  }
+
+  public async signIn(user: IAuthorization): Promise<SignInResponse> {
     const userEntity = await this.getUserByNickname(user.nickname);
 
-    if (userEntity) {
+    if (!userEntity) {
       throwBadRequest(ResponseStatuses.BAD_REQUEST.description);
     }
+
+    const isPasswordValid = await this.comparePassword(
+      user.password,
+      userEntity.password,
+    );
+
+    if (isPasswordValid) {
+      const token: string = this.createJwt(userEntity.id);
+      return { message: ResponseStatuses.OK.description, token };
+    }
+
+    throwBadRequest(ResponseStatuses.BAD_REQUEST.description);
   }
 }

@@ -30,6 +30,10 @@
     "amqp-connection-manager": "^4.1.0",
     "amqplib": "^0.8.0",
     "bcrypt": "^5.0.1",
+    "@nestjs/jwt": "^8.0.0",
+    "passport-jwt": "^4.0.0",
+    "@nestjs/passport": "^8.1.0",
+    "passport": "^0.5.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
     "mysql2": "^2.3.3",
@@ -41,6 +45,7 @@
     "types-univer": "git+https://github.com/X932/types_univer.git"
   },
   "devDependencies": {
+    "@types/passport-jwt": "^3.0.6",
     "@nestjs/cli": "^8.0.0",
     "@nestjs/schematics": "^8.0.0",
     "@nestjs/testing": "^8.0.0",
