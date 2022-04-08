@@ -35,13 +35,16 @@ export class AuthService {
     return hash;
   }
 
-  private async createRelations(user: UsersEntity, signUpUser: ISignUpUser) {
+  private async createRelations(
+    user: UsersEntity,
+    userCredentials: ISignUpUser,
+  ) {
     await getConnection().transaction(async (transactionalEntityManager) => {
       const savedUser = await transactionalEntityManager.save<UsersEntity>(
         user,
       );
       const department = await this.departmentsRepository.findOne({
-        id: signUpUser.departmentId,
+        id: userCredentials.departmentId,
       });
       if (!department) {
         throwBadRequest(ResponseStatuses.DEPARTMENT_NOT_FOUND.description);
@@ -54,7 +57,7 @@ export class AuthService {
       );
 
       const group = await this.groupsRepository.findOne({
-        id: signUpUser.groupId,
+        id: userCredentials.groupId,
       });
       if (!group) {
         throwBadRequest(ResponseStatuses.GROUP_NOT_FOUND.description);
