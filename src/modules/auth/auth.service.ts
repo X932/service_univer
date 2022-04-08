@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UsersEntity } from '@modules/users/entities/users.entity';
 import { throwBadRequest } from '@errors/throw-bad-request';
 import { ResponseStatuses } from '@constants/response-statuses';
+import { UsersDepartmentsEntity } from '@relations-entities/users-departments.relation';
+import { DepartmentsEntity } from '@modules/departments/entities/departments.entity';
+import { UsersGroupsEntity } from '@relations-entities/users-groups.relation';
+import { GroupsEntity } from '@modules/groups/entities/groups.entity';
 import { SignUpResponse, ISignUpUser } from './models/auth.model';
 
 @Injectable()
@@ -12,6 +16,10 @@ export class AuthService {
   constructor(
     @InjectRepository(UsersEntity)
     private usersRepository: Repository<UsersEntity>,
+    @InjectRepository(DepartmentsEntity)
+    private departmentsRepository: Repository<DepartmentsEntity>,
+    @InjectRepository(GroupsEntity)
+    private groupsRepository: Repository<GroupsEntity>,
   ) {}
 
   private async getUserByNickname(
@@ -27,19 +35,58 @@ export class AuthService {
     return hash;
   }
 
-  public async signUp(user: ISignUpUser): Promise<SignUpResponse> {
-    const userEntity = await this.getUserByNickname(user.nickname);
+  private async createRelations(
+    user: UsersEntity,
+    userCredentials: ISignUpUser,
+  ) {
+    await getConnection().transaction(async (transactionalEntityManager) => {
+      const savedUser = await transactionalEntityManager.save<UsersEntity>(
+        user,
+      );
+      const department = await this.departmentsRepository.findOne({
+        id: userCredentials.departmentId,
+      });
+      if (!department) {
+        throwBadRequest(ResponseStatuses.DEPARTMENT_NOT_FOUND.description);
+      }
+      const userDepartmentRelation = new UsersDepartmentsEntity();
+      userDepartmentRelation.department = department;
+      userDepartmentRelation.user = savedUser;
+      await transactionalEntityManager.save<UsersDepartmentsEntity>(
+        userDepartmentRelation,
+      );
+
+      const group = await this.groupsRepository.findOne({
+        id: userCredentials.groupId,
+      });
+      if (!group) {
+        throwBadRequest(ResponseStatuses.GROUP_NOT_FOUND.description);
+      }
+      const userGroupRelation = new UsersGroupsEntity();
+      userGroupRelation.group = group;
+      userGroupRelation.user = user;
+      await transactionalEntityManager.save<UsersGroupsEntity>(
+        userGroupRelation,
+      );
+    });
+  }
+
+  public async signUp(userCredentials: ISignUpUser): Promise<SignUpResponse> {
+    const userEntity = await this.getUserByNickname(userCredentials.nickname);
 
     if (userEntity) {
       throwBadRequest(ResponseStatuses.BAD_REQUEST.description);
     }
-    const hashedPassword: string = await this.hashPassword(user.password);
-    const row: ISignUpUser = {
-      ...user,
-      password: hashedPassword,
-    };
+    const hashedPassword: string = await this.hashPassword(
+      userCredentials.password,
+    );
+    const user: UsersEntity = new UsersEntity();
+    user.name = userCredentials.name;
+    user.surname = userCredentials.surname;
+    user.nickname = userCredentials.nickname;
+    user.password = hashedPassword;
 
-    await this.usersRepository.save(row);
+    await this.createRelations(user, userCredentials);
     return { message: ResponseStatuses.OK.description };
   }
 
@@ -49,6 +96,4 @@ export class AuthService {
   ): Promise<boolean> {
     return await bcrypt.compare(password, hash);
   }
-
-  public async signIn() {}
 }
