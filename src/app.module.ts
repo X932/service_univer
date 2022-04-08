@@ -4,11 +4,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ModulesModule } from '@modules/modules.module';
 import { RelationsEntitiesModule } from '@relations-entities/relations-entities.module';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 
 @Module({
   controllers: [AppController],
-  providers: [AppService],
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
