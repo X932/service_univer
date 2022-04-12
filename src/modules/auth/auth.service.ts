@@ -94,7 +94,11 @@ export class AuthService {
     user.password = hashedPassword;
 
     await this.createRelations(user, userCredentials);
-    return { message: ResponseStatuses.OK.description };
+    const { id } = await this.getUserByNickname(userCredentials.nickname);
+    return {
+      message: ResponseStatuses.OK.description,
+      userId: id,
+    };
   }
 
   private async comparePassword(

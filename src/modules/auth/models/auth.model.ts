@@ -1,7 +1,18 @@
 import { RpcException } from '@nestjs/microservices';
 
-export type SignUpResponse = { message: string } | RpcException;
-export type SignInResponse = { message: string; token: string } | RpcException;
+interface ISuccessSignUp {
+  userId: number;
+  message: string;
+}
+
+export type SignUpResponse = ISuccessSignUp | RpcException;
+
+interface ISuccessSignIn {
+  message: string;
+  token: string;
+}
+
+export type SignInResponse = ISuccessSignIn | RpcException;
 
 export interface ISignUpUser {
   name: string;
@@ -10,6 +21,7 @@ export interface ISignUpUser {
   password: string;
   groupId: number;
   departmentId: number;
+  roleId: number;
 }
 
 export interface IAuthorization {
