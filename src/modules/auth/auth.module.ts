@@ -7,13 +7,12 @@ import { UsersDepartmentsEntity } from '@relations-entities/users-departments.re
 import { UsersGroupsEntity } from '@relations-entities/users-groups.relation';
 import { JwtModule } from '@nestjs/jwt';
 import { JWT_KEY } from '@constants/jwt-key';
-import { JwtStrategy } from './jwt.strategy';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService],
   imports: [
     JwtModule.register({ secret: JWT_KEY, signOptions: { expiresIn: '1d' } }),
     TypeOrmModule.forFeature([
