@@ -4,7 +4,7 @@
     "paths": {
       "@relations-entities/*": ["shared/relations-entities/*"],
       "@constants/*": ["shared/constants/*"],
-      "@errors/*": ["shared/errors/*"],
+      "@exceptions/*": ["shared/exceptions/*"],
       "@modules/*": ["modules/*"]
     },
     "module": "commonjs",

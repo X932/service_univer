@@ -3,13 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { getConnection, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UsersEntity } from '@modules/users/entities/users.entity';
-import { throwBadRequest } from '@errors/throw-bad-request';
 import { ResponseStatuses } from '@constants/response-statuses';
 import { UsersDepartmentsEntity } from '@relations-entities/users-departments.relation';
 import { DepartmentsEntity } from '@modules/departments/entities/departments.entity';
 import { UsersGroupsEntity } from '@relations-entities/users-groups.relation';
 import { GroupsEntity } from '@modules/groups/entities/groups.entity';
 import { JwtService } from '@nestjs/jwt';
+import { CustomRpcException } from '@exceptions/custom-rpc-exception';
 import {
   SignUpResponse,
   ISignUpUser,
@@ -54,7 +54,10 @@ export class AuthService {
         id: userCredentials.departmentId,
       });
       if (!department) {
-        throwBadRequest(ResponseStatuses.DEPARTMENT_NOT_FOUND.description);
+        throw new CustomRpcException(
+          ResponseStatuses.DEPARTMENT_NOT_FOUND.code,
+          ResponseStatuses.DEPARTMENT_NOT_FOUND.description,
+        );
       }
       const userDepartmentRelation = new UsersDepartmentsEntity();
       userDepartmentRelation.department = department;
@@ -67,7 +70,10 @@ export class AuthService {
         id: userCredentials.groupId,
       });
       if (!group) {
-        throwBadRequest(ResponseStatuses.GROUP_NOT_FOUND.description);
+        throw new CustomRpcException(
+          ResponseStatuses.GROUP_NOT_FOUND.code,
+          ResponseStatuses.GROUP_NOT_FOUND.description,
+        );
       }
       const userGroupRelation = new UsersGroupsEntity();
       userGroupRelation.group = group;
@@ -82,7 +88,10 @@ export class AuthService {
     const userEntity = await this.getUserByNickname(userCredentials.nickname);
 
     if (userEntity) {
-      throwBadRequest(ResponseStatuses.BAD_REQUEST.description);
+      throw new CustomRpcException(
+        ResponseStatuses.BAD_REQUEST.code,
+        ResponseStatuses.BAD_REQUEST.description,
+      );
     }
     const hashedPassword: string = await this.hashPassword(
       userCredentials.password,
@@ -108,8 +117,8 @@ export class AuthService {
     return await bcrypt.compare(password, hash);
   }
 
-  private createJwt(id: number): string {
-    const payload = { sub: id };
+  private createJwt(userId: number): string {
+    const payload = { sub: userId };
     return this.jwtService.sign(payload);
   }
 
@@ -117,7 +126,10 @@ export class AuthService {
     const userEntity = await this.getUserByNickname(user.nickname);
 
     if (!userEntity) {
-      throwBadRequest(ResponseStatuses.BAD_REQUEST.description);
+      throw new CustomRpcException(
+        ResponseStatuses.BAD_REQUEST.code,
+        ResponseStatuses.BAD_REQUEST.description,
+      );
     }
 
     const isPasswordValid = await this.comparePassword(
@@ -130,6 +142,9 @@ export class AuthService {
       return { message: ResponseStatuses.OK.description, token };
     }
 
-    throwBadRequest(ResponseStatuses.BAD_REQUEST.description);
+    throw new CustomRpcException(
+      ResponseStatuses.BAD_REQUEST.code,
+      ResponseStatuses.BAD_REQUEST.description,
+    );
   }
 }
